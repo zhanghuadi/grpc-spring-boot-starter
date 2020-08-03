@@ -29,6 +29,7 @@ dependencies {
     implementation 'io.grpc:grpc-netty-shaded'
     implementation 'io.grpc:grpc-protobuf'
     implementation 'io.grpc:grpc-stub'
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.66'
 }
 
 protobuf {
