@@ -22,24 +22,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import io.grpc.Channel;
 import io.grpc.stub.AbstractStub;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.client.stubfactory.StandardJavaGrpcStubFactory;
 import net.devh.boot.grpc.client.stubfactory.StubFactory;
-import net.devh.boot.grpc.test.config.BaseAutoConfiguration;
-import net.devh.boot.grpc.test.config.InProcessConfiguration;
-import net.devh.boot.grpc.test.config.ServiceConfiguration;
 import net.devh.boot.grpc.test.inject.CustomGrpc.ConstructorAccessibleStub;
 import net.devh.boot.grpc.test.inject.CustomGrpc.CustomAccessibleStub;
 import net.devh.boot.grpc.test.inject.CustomGrpc.FactoryMethodAccessibleStub;
-import net.devh.boot.grpc.test.inject.GrpcClientInjectionTest.TestConfig;
 import net.devh.boot.grpc.test.proto.TestServiceGrpc.TestServiceBlockingStub;
 import net.devh.boot.grpc.test.proto.TestServiceGrpc.TestServiceFutureStub;
 import net.devh.boot.grpc.test.proto.TestServiceGrpc.TestServiceStub;
@@ -49,11 +43,8 @@ import net.devh.boot.grpc.test.proto.TestServiceGrpc.TestServiceStub;
  *
  * @author Daniel Theuke (daniel.theuke@heuboe.de)
  */
-@SpringBootTest
-@SpringJUnitConfig(classes = {TestConfig.class, InProcessConfiguration.class, ServiceConfiguration.class,
-        BaseAutoConfiguration.class})
 @DirtiesContext
-class GrpcClientInjectionTest {
+abstract class AbstractGrpcClientInjectionTest {
 
     @GrpcClient("test")
     Channel channel;
@@ -81,75 +72,79 @@ class GrpcClientInjectionTest {
     @PostConstruct
     public void init() {
         // Test injection
-        assertNotNull(this.channel, "channel");
-        assertNotNull(this.stub, "stub");
-        assertNotNull(this.blockingStub, "blockingStub");
-        assertNotNull(this.futureStub, "futureStub");
-        assertNotNull(this.constructorStub, "constructorStub");
-        assertNotNull(this.factoryMethodStub, "factoryMethodStub");
-        assertNotNull(this.customStub, "customStub");
+        assertValid(this.channel, "channel");
+        assertValid(this.stub, "stub");
+        assertValid(this.blockingStub, "blockingStub");
+        assertValid(this.futureStub, "futureStub");
+        assertValid(this.constructorStub, "constructorStub");
+        assertValid(this.factoryMethodStub, "factoryMethodStub");
+        assertValid(this.customStub, "customStub");
     }
 
     @GrpcClient("test")
     void inject(final Channel channel) {
-        assertNotNull(channel, "channel");
+        assertValid(channel, "channel");
         this.channelSetted = channel;
     }
 
     @GrpcClient("test")
     void inject(final TestServiceStub stub) {
-        assertNotNull(stub, "stub");
+        assertValid(stub, "stub");
         this.stubSetted = stub;
     }
 
     @GrpcClient("test")
     void inject(final TestServiceBlockingStub stub) {
-        assertNotNull(stub, "stub");
+        assertValid(stub, "stub");
         this.blockingStubSetted = stub;
     }
 
     @GrpcClient("test")
     void inject(final TestServiceFutureStub stub) {
-        assertNotNull(stub, "stub");
+        assertValid(stub, "stub");
         this.futureStubSetted = stub;
     }
 
     @GrpcClient("test")
     void inject(final ConstructorAccessibleStub stub) {
-        assertNotNull(stub, "stub");
+        assertValid(stub, "stub");
         this.constructorStubSetted = stub;
     }
 
     @GrpcClient("test")
     void inject(final FactoryMethodAccessibleStub stub) {
-        assertNotNull(stub, "stub");
+        assertValid(stub, "stub");
         this.factoryMethodStubSetted = stub;
     }
 
     @GrpcClient("test")
     void inject(final CustomAccessibleStub stub) {
-        assertNotNull(stub, "stub");
+        assertValid(stub, "stub");
         this.customStubSetted = stub;
     }
 
     @Test
     void testAllSet() {
         // Field injection
-        assertNotNull(this.channel, "channel");
-        assertNotNull(this.stub, "stub");
-        assertNotNull(this.blockingStub, "blockingStub");
-        assertNotNull(this.futureStub, "futureStub");
-        assertNotNull(this.constructorStub, "constructorStub");
-        assertNotNull(this.factoryMethodStub, "factoryMethodStub");
-        assertNotNull(this.customStub, "customStub");
+        assertValid(this.channel, "channel");
+        assertValid(this.stub, "stub");
+        assertValid(this.blockingStub, "blockingStub");
+        assertValid(this.futureStub, "futureStub");
+        assertValid(this.constructorStub, "constructorStub");
+        assertValid(this.factoryMethodStub, "factoryMethodStub");
+        assertValid(this.customStub, "customStub");
         // Setter injection
-        assertNotNull(this.channelSetted, "channelSetted");
-        assertNotNull(this.stubSetted, "stubSetted");
-        assertNotNull(this.blockingStubSetted, "blockingStubSetted");
-        assertNotNull(this.futureStubSetted, "futureStubSetted");
-        assertNotNull(this.constructorStubSetted, "constructorStubSetted");
-        assertNotNull(this.factoryMethodStubSetted, "factoryMethodStubSetted");
-        assertNotNull(this.customStubSetted, "customStubSetted");
+        assertValid(this.channelSetted, "channelSetted");
+        assertValid(this.stubSetted, "stubSetted");
+        assertValid(this.blockingStubSetted, "blockingStubSetted");
+        assertValid(this.futureStubSetted, "futureStubSetted");
+        assertValid(this.constructorStubSetted, "constructorStubSetted");
+        assertValid(this.factoryMethodStubSetted, "factoryMethodStubSetted");
+        assertValid(this.customStubSetted, "customStubSetted");
+    }
+
+    protected void assertValid(final Object actual, final String message) {
+        assertNotNull(actual, message);
     }
 
     @TestConfiguration
