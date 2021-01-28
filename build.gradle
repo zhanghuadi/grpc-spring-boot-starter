@@ -1,12 +1,14 @@
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import io.franzbecker.gradle.lombok.task.DelombokTask
 
 buildscript {
     repositories {
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
+        mavenCentral()
     }
     ext {
         projectVersion = '2.11.0-SNAPSHOT'
@@ -84,7 +86,7 @@ allprojects {
     }
 
     compileJava.options*.compilerArgs = [
-        '-Xlint:all', '-Xlint:-processing'
+            '-Xlint:all', '-Xlint:-processing'
     ]
 
     spotless {
@@ -113,18 +115,18 @@ allprojects {
     jar {
         manifest {
             attributes(
-                'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
-                'Built-By': 'travis',
-                'Build-Date': buildDate,
-                'Build-Time': buildTime,
-                'Built-OS': "${System.properties['os.name']}",
-                'Build-Revision': buildRevision,
-                'Specification-Title': project.name,
-                'Specification-Version': projectVersion,
-                'Specification-Vendor': 'Michael Zhang',
-                'Implementation-Title': project.name,
-                'Implementation-Version': projectVersion,
-                'Implementation-Vendor': 'Michael Zhang'
+                    'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+                    'Built-By': 'travis',
+                    'Build-Date': buildDate,
+                    'Build-Time': buildTime,
+                    'Built-OS': "${System.properties['os.name']}",
+                    'Build-Revision': buildRevision,
+                    'Specification-Title': project.name,
+                    'Specification-Version': projectVersion,
+                    'Specification-Vendor': 'Michael Zhang',
+                    'Implementation-Title': project.name,
+                    'Implementation-Version': projectVersion,
+                    'Implementation-Vendor': 'Michael Zhang'
             )
         }
     }
